@@ -226,9 +226,9 @@ export const adminListOrders = createServerFn({ method: "GET" })
       };
       return {
         ...row,
-        subtotal_kes: Number(row.subtotal_kes),
-        delivery_fee_kes: Number(row.delivery_fee_kes),
-        total_kes: Number(row.total_kes),
+        subtotal_kes: Number(row["subtotal_kes"]),
+        delivery_fee_kes: Number(row["delivery_fee_kes"]),
+        total_kes: Number(row["total_kes"]),
         delivery_zone_name: row.delivery_zones?.name ?? null,
         delivery_zones: undefined,
         items: (row.order_items ?? []).map((i) => ({

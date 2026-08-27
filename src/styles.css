@@ -41,6 +41,12 @@
   --color-coral-foreground: var(--coral-foreground);
   --color-navy: var(--navy);
   --color-navy-foreground: var(--navy-foreground);
+  --color-leaf: var(--leaf);
+  --color-leaf-foreground: var(--leaf-foreground);
+  --color-sunset: var(--sunset);
+  --color-sunset-foreground: var(--sunset-foreground);
+  --color-sky: var(--sky);
+  --color-sky-foreground: var(--sky-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);

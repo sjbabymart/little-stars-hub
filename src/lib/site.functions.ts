@@ -13,9 +13,9 @@ import type {
 } from "./dto";
 
 const DEFAULT_CONTACT: ContactSettings = {
-  phone: "+254 7XX XXX XXX",
-  whatsapp: "254700000000",
-  email: "hello@example.com",
+  phone: "+254711706413",
+  whatsapp: "254711706413",
+  email: "info@sjclinic.co.ke",
   address: "Nairobi, Kenya",
   hours: "Mon–Sat, 9:00am – 6:00pm",
 };
@@ -26,9 +26,9 @@ const DEFAULT_SHOP: ShopSettings = {
 };
 const DEFAULT_CLINIC: ClinicSettings = {
   name: "Njau Children's Clinic",
-  tagline: "Gentle, expert care for your little ones",
+  tagline: "Caring for Children, Supporting Families",
   hours: "Mon–Fri 8:00am–5:00pm",
-  phone: "+254 7XX XXX XXX",
+  phone: "+254711706413",
   services: [],
 };
 

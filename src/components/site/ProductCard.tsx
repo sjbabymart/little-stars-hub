@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import type { Product } from "@/lib/dto";
 import { formatKes } from "@/lib/format";
 
@@ -7,9 +6,8 @@ export function ProductCard({ product }: { product: Product }) {
     product.compare_at_price_kes != null && product.compare_at_price_kes > product.price_kes;
 
   return (
-    <Link
-      to="/product/$slug"
-      params={{ slug: product.slug }}
+    <a
+      href={`/product/${product.slug}`}
       className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all hover:-translate-y-1 hover:shadow-lift"
     >
       <div className="relative aspect-4/5 overflow-hidden bg-muted">

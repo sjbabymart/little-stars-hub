@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Menu, Phone, ShoppingBag, X } from "lucide-react";
 import { Logo } from "./Logo";
@@ -14,7 +13,7 @@ const links = [
   { to: "/clinic", label: "Clinic" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
-] as const;
+];
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -37,32 +36,30 @@ export function SiteHeader() {
       </div>
 
       <div className="border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2.5">
-          <Logo />
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2">
+          <Logo imgClassName="h-16 w-auto md:h-20" />
 
           <nav className="hidden items-center gap-1 lg:flex">
             {links.map((l) => (
-              <Link
+              <a
                 key={l.to}
-                to={l.to}
-                activeOptions={{ exact: l.to === "/" }}
-                activeProps={{ className: "bg-secondary text-primary" }}
+                href={l.to}
                 className="rounded-full px-4 py-2 text-sm font-semibold text-foreground/80 transition-colors hover:bg-secondary hover:text-primary"
               >
                 {l.label}
-              </Link>
+              </a>
             ))}
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link
-              to="/clinic"
+            <a
+              href="/clinic"
               className="hidden rounded-full bg-leaf px-4 py-2 text-sm font-bold text-leaf-foreground shadow-soft transition-transform hover:-translate-y-0.5 md:inline-flex"
             >
               Book appointment
-            </Link>
-            <Link
-              to="/cart"
+            </a>
+            <a
+              href="/cart"
               className="relative inline-flex items-center gap-2 rounded-full border border-border px-3.5 py-2 text-sm font-semibold text-primary hover:bg-secondary"
             >
               <ShoppingBag className="size-4" />
@@ -72,7 +69,7 @@ export function SiteHeader() {
                   {count}
                 </span>
               )}
-            </Link>
+            </a>
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
@@ -87,16 +84,14 @@ export function SiteHeader() {
         <div className={cn("lg:hidden", open ? "block" : "hidden")}>
           <nav className="mx-auto grid max-w-7xl gap-1 border-t border-border px-4 py-3">
             {links.map((l) => (
-              <Link
+              <a
                 key={l.to}
-                to={l.to}
+                href={l.to}
                 onClick={() => setOpen(false)}
-                activeOptions={{ exact: l.to === "/" }}
-                activeProps={{ className: "bg-secondary text-primary" }}
                 className="rounded-lg px-3 py-2 text-sm font-semibold text-foreground/80"
               >
                 {l.label}
-              </Link>
+              </a>
             ))}
           </nav>
         </div>

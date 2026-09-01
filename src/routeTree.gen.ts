@@ -10,7 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SplatRouteImport } from './routes/$'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as ClinicRouteImport } from './routes/clinic'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as RedCarpetRouteImport } from './routes/red-carpet'
 import { Route as ShopRouteImport } from './routes/shop'
 
 const IndexRoute = IndexRouteImport.update({
@@ -18,9 +22,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SplatRoute = SplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClinicRoute = ClinicRouteImport.update({
   id: '/clinic',
   path: '/clinic',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedCarpetRoute = RedCarpetRouteImport.update({
+  id: '/red-carpet',
+  path: '/red-carpet',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -31,31 +55,56 @@ const ShopRoute = ShopRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/about': typeof AboutRoute
   '/clinic': typeof ClinicRoute
+  '/contact': typeof ContactRoute
+  '/red-carpet': typeof RedCarpetRoute
   '/shop': typeof ShopRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/about': typeof AboutRoute
   '/clinic': typeof ClinicRoute
+  '/contact': typeof ContactRoute
+  '/red-carpet': typeof RedCarpetRoute
   '/shop': typeof ShopRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/about': typeof AboutRoute
   '/clinic': typeof ClinicRoute
+  '/contact': typeof ContactRoute
+  '/red-carpet': typeof RedCarpetRoute
   '/shop': typeof ShopRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/clinic' | '/shop'
+  fullPaths:
+    '/' | '/$' | '/about' | '/clinic' | '/contact' | '/red-carpet' | '/shop'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/clinic' | '/shop'
-  id: '__root__' | '/' | '/clinic' | '/shop'
+  to: '/' | '/$' | '/about' | '/clinic' | '/contact' | '/red-carpet' | '/shop'
+  id:
+    | '__root__'
+    | '/'
+    | '/$'
+    | '/about'
+    | '/clinic'
+    | '/contact'
+    | '/red-carpet'
+    | '/shop'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SplatRoute: typeof SplatRoute
+  AboutRoute: typeof AboutRoute
   ClinicRoute: typeof ClinicRoute
+  ContactRoute: typeof ContactRoute
+  RedCarpetRoute: typeof RedCarpetRoute
   ShopRoute: typeof ShopRoute
 }
 
@@ -68,11 +117,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$': {
+      id: '/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/clinic': {
       id: '/clinic'
       path: '/clinic'
       fullPath: '/clinic'
       preLoaderRoute: typeof ClinicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/red-carpet': {
+      id: '/red-carpet'
+      path: '/red-carpet'
+      fullPath: '/red-carpet'
+      preLoaderRoute: typeof RedCarpetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -87,7 +164,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SplatRoute: SplatRoute,
+  AboutRoute: AboutRoute,
   ClinicRoute: ClinicRoute,
+  ContactRoute: ContactRoute,
+  RedCarpetRoute: RedCarpetRoute,
   ShopRoute: ShopRoute,
 }
 export const routeTree = rootRouteImport

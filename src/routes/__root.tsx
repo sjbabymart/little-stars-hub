@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart";
 import { SiteHeader } from "../components/site/SiteHeader";
 import { SiteFooter } from "../components/site/SiteFooter";
+import { FloatingActions } from "../components/site/FloatingActions";
 import { Toaster } from "../components/ui/sonner";
 
 function NotFoundComponent() {
@@ -155,6 +156,7 @@ function RootComponent() {
             <Outlet />
           </main>
           {!bare && <SiteFooter />}
+          {!bare && <FloatingActions />}
         </div>
         <Toaster richColors position="top-center" />
       </CartProvider>

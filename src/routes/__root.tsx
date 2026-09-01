@@ -15,24 +15,43 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart";
 import { SiteHeader } from "../components/site/SiteHeader";
 import { SiteFooter } from "../components/site/SiteFooter";
+import { FloatingActions } from "../components/site/FloatingActions";
 import { Toaster } from "../components/ui/sonner";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+    <div className="flex min-h-[70vh] items-center justify-center bg-background px-4 py-16">
+      <div className="max-w-lg rounded-[2rem] bg-card p-8 text-center shadow-soft md:p-12">
+        <span className="inline-flex rounded-full bg-sunset px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-sunset-foreground">
+          Website still under construction
+        </span>
+        <h1 className="mt-5 font-display text-5xl text-primary">404</h1>
+        <h2 className="mt-3 font-display text-xl text-primary">This page isn&apos;t ready yet</h2>
+        <p className="mt-3 text-sm text-muted-foreground">
+          We&apos;re still building this part of the S &amp; J Baby Mart and Njau Children&apos;s
+          Clinic website. In the meantime, talk to us directly on WhatsApp or by phone.
         </p>
-        <div className="mt-6">
+        <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground"
           >
             Go home
           </Link>
+          <a
+            href="https://wa.me/254711706413"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center rounded-full bg-leaf px-5 py-2.5 text-sm font-bold text-leaf-foreground"
+          >
+            WhatsApp us
+          </a>
+          <a
+            href="tel:+254711706413"
+            className="inline-flex items-center justify-center rounded-full border border-border px-5 py-2.5 text-sm font-bold text-primary"
+          >
+            +254711706413
+          </a>
         </div>
       </div>
     </div>
@@ -137,6 +156,7 @@ function RootComponent() {
             <Outlet />
           </main>
           {!bare && <SiteFooter />}
+          {!bare && <FloatingActions />}
         </div>
         <Toaster richColors position="top-center" />
       </CartProvider>

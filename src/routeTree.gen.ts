@@ -13,8 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ClinicRouteImport } from './routes/clinic'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as OrderConfirmedRouteImport } from './routes/order-confirmed'
 import { Route as RedCarpetRouteImport } from './routes/red-carpet'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
@@ -39,6 +41,11 @@ const CartRoute = CartRouteImport.update({
   path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClinicRoute = ClinicRouteImport.update({
   id: '/clinic',
   path: '/clinic',
@@ -47,6 +54,11 @@ const ClinicRoute = ClinicRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderConfirmedRoute = OrderConfirmedRouteImport.update({
+  id: '/order-confirmed',
+  path: '/order-confirmed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RedCarpetRoute = RedCarpetRouteImport.update({
@@ -70,8 +82,10 @@ export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
   '/clinic': typeof ClinicRoute
   '/contact': typeof ContactRoute
+  '/order-confirmed': typeof OrderConfirmedRoute
   '/red-carpet': typeof RedCarpetRoute
   '/shop': typeof ShopRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -81,8 +95,10 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
   '/clinic': typeof ClinicRoute
   '/contact': typeof ContactRoute
+  '/order-confirmed': typeof OrderConfirmedRoute
   '/red-carpet': typeof RedCarpetRoute
   '/shop': typeof ShopRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -93,8 +109,10 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/cart': typeof CartRoute
+  '/checkout': typeof CheckoutRoute
   '/clinic': typeof ClinicRoute
   '/contact': typeof ContactRoute
+  '/order-confirmed': typeof OrderConfirmedRoute
   '/red-carpet': typeof RedCarpetRoute
   '/shop': typeof ShopRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -106,8 +124,10 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/cart'
+    | '/checkout'
     | '/clinic'
     | '/contact'
+    | '/order-confirmed'
     | '/red-carpet'
     | '/shop'
     | '/product/$slug'
@@ -117,8 +137,10 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/cart'
+    | '/checkout'
     | '/clinic'
     | '/contact'
+    | '/order-confirmed'
     | '/red-carpet'
     | '/shop'
     | '/product/$slug'
@@ -128,8 +150,10 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/cart'
+    | '/checkout'
     | '/clinic'
     | '/contact'
+    | '/order-confirmed'
     | '/red-carpet'
     | '/shop'
     | '/product/$slug'
@@ -140,8 +164,10 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
   CartRoute: typeof CartRoute
+  CheckoutRoute: typeof CheckoutRoute
   ClinicRoute: typeof ClinicRoute
   ContactRoute: typeof ContactRoute
+  OrderConfirmedRoute: typeof OrderConfirmedRoute
   RedCarpetRoute: typeof RedCarpetRoute
   ShopRoute: typeof ShopRoute
   ProductSlugRoute: typeof ProductSlugRoute
@@ -177,6 +203,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/clinic': {
       id: '/clinic'
       path: '/clinic'
@@ -189,6 +222,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order-confirmed': {
+      id: '/order-confirmed'
+      path: '/order-confirmed'
+      fullPath: '/order-confirmed'
+      preLoaderRoute: typeof OrderConfirmedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/red-carpet': {
@@ -220,8 +260,10 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
   CartRoute: CartRoute,
+  CheckoutRoute: CheckoutRoute,
   ClinicRoute: ClinicRoute,
   ContactRoute: ContactRoute,
+  OrderConfirmedRoute: OrderConfirmedRoute,
   RedCarpetRoute: RedCarpetRoute,
   ShopRoute: ShopRoute,
   ProductSlugRoute: ProductSlugRoute,

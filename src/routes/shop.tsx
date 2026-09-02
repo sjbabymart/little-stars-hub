@@ -1,8 +1,10 @@
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, MessageCircle, Phone, ShoppingBag } from "lucide-react";
+import { Search, ShoppingBag, Truck } from "lucide-react";
 import { ProductCard } from "@/components/site/ProductCard";
-import { catalogQuery, siteContentQuery } from "@/lib/queries";
+import { catalogQuery, deliveryZonesQuery, siteContentQuery } from "@/lib/queries";
+import { formatKes } from "@/lib/format";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -11,13 +13,13 @@ export const Route = createFileRoute("/shop")({
       {
         name: "description",
         content:
-          "Browse baby clothing, essentials and fashion categories at S & J Baby Mart, Nairobi. Order on WhatsApp — online checkout is coming soon.",
+          "Shop baby clothing, essentials, footwear and accessories at S & J Baby Mart, Nairobi. Browse by category, add to cart and check out with delivery or pickup.",
       },
       { property: "og:title", content: "Shop Baby Clothing & Essentials | S & J Baby Mart" },
       {
         property: "og:description",
         content:
-          "Browse our baby clothing and essentials categories in Nairobi. Order today on WhatsApp.",
+          "Baby clothing, essentials, footwear and accessories in Nairobi — order online with delivery or store pickup.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/shop" },
@@ -27,20 +29,43 @@ export const Route = createFileRoute("/shop")({
   component: ShopPage,
 });
 
-function ShopPage() {
-  const { data: site } = useQuery(siteContentQuery);
-  const { data: catalog } = useQuery(catalogQuery);
-  const wa = site?.contact.whatsapp ?? "254711706413";
-  const phone = site?.contact.phone ?? "+254711706413";
-  const categories = catalog?.categories ?? [];
-  const products = (catalog?.products ?? []).slice(0, 8);
+type SortKey = "newest" | "price-asc" | "price-desc" | "name";
 
-  const waLink = `https://wa.me/${wa}?text=${encodeURIComponent("Hello S & J Baby Mart, I'd like to place an order.")}`;
+function ShopPage() {
+  const { data: catalog } = useQuery(catalogQuery);
+  const { data: site } = useQuery(siteContentQuery);
+  const { data: zones } = useQuery(deliveryZonesQuery);
+
+  const [q, setQ] = useState("");
+  const [category, setCategory] = useState<string>("all");
+  const [sort, setSort] = useState<SortKey>("newest");
+
+  const categories = catalog?.categories ?? [];
+  const products = catalog?.products ?? [];
+  const threshold = site?.shop.free_delivery_threshold ?? 0;
+
+  const visible = useMemo(() => {
+    const term = q.trim().toLowerCase();
+    const list = products.filter((p) => {
+      const inCat = category === "all" || p.category_id === category;
+      const match =
+        !term ||
+        p.name.toLowerCase().includes(term) ||
+        (p.description ?? "").toLowerCase().includes(term) ||
+        (p.category_name ?? "").toLowerCase().includes(term);
+      return inCat && match;
+    });
+    const sorted = [...list];
+    if (sort === "price-asc") sorted.sort((a, b) => a.price_kes - b.price_kes);
+    if (sort === "price-desc") sorted.sort((a, b) => b.price_kes - a.price_kes);
+    if (sort === "name") sorted.sort((a, b) => a.name.localeCompare(b.name));
+    return sorted;
+  }, [products, q, category, sort]);
 
   return (
     <div>
       <section className="bg-secondary">
-        <div className="mx-auto max-w-7xl px-4 py-12 md:py-16">
+        <div className="mx-auto max-w-7xl px-4 py-12 md:py-14">
           <span className="inline-flex items-center gap-2 rounded-full bg-card px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-leaf shadow-soft">
             <ShoppingBag className="size-3.5" aria-hidden="true" /> The Baby Mart
           </span>
@@ -48,92 +73,122 @@ function ShopPage() {
             Shop baby clothing, essentials &amp; fashion
           </h1>
           <p className="mt-4 max-w-2xl text-base text-muted-foreground">
-            Carefully chosen pieces for newborns and growing little ones, right here in Nairobi.
+            Carefully chosen pieces for newborns and growing little ones, delivered across Nairobi.
           </p>
+          {threshold > 0 && (
+            <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-card px-4 py-2 text-sm font-semibold text-primary shadow-soft">
+              <Truck className="size-4 text-leaf" aria-hidden="true" /> Free delivery on orders over{" "}
+              {formatKes(threshold)}
+            </p>
+          )}
         </div>
       </section>
 
       <div className="mx-auto max-w-7xl px-4 py-10">
-        <div
-          role="status"
-          className="flex flex-col gap-4 rounded-3xl border border-sunset/40 bg-sunset/10 p-5 md:flex-row md:items-center md:justify-between"
-        >
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 size-5 shrink-0 text-sunset" aria-hidden="true" />
-            <div>
-              <p className="font-display text-lg text-primary">Website still under construction</p>
-              <p className="text-sm text-muted-foreground">
-                Online checkout isn&apos;t ready yet. Send us the items you love on WhatsApp or call
-                us and we&apos;ll take care of the order and delivery.
-              </p>
-            </div>
-          </div>
-          <div className="flex shrink-0 flex-wrap gap-2">
-            <a
-              href={waLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-leaf px-5 py-2.5 text-sm font-bold text-leaf-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        {/* Categories */}
+        <section aria-labelledby="categories-heading">
+          <h2 id="categories-heading" className="font-display text-2xl text-primary md:text-3xl">
+            Shop by category
+          </h2>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setCategory("all")}
+              aria-pressed={category === "all"}
+              className={`rounded-full px-4 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                category === "all"
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border bg-card text-primary hover:bg-secondary"
+              }`}
             >
-              <MessageCircle className="size-4" aria-hidden="true" /> Order on WhatsApp
-            </a>
-            <a
-              href={`tel:${phone}`}
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-bold text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              <Phone className="size-4" aria-hidden="true" /> {phone}
-            </a>
-          </div>
-        </div>
-
-        <section className="mt-12">
-          <h2 className="font-display text-2xl text-primary md:text-3xl">Shop by category</h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              All products
+            </button>
             {categories.map((c) => (
-              <div
+              <button
                 key={c.id}
-                className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft"
+                type="button"
+                onClick={() => setCategory(c.id)}
+                aria-pressed={category === c.id}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                  category === c.id
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-border bg-card text-primary hover:bg-secondary"
+                }`}
               >
-                <div className="aspect-16/9 bg-muted">
-                  {c.image_url ? (
-                    <img
-                      src={c.image_url}
-                      alt={c.name}
-                      loading="lazy"
-                      className="size-full object-cover"
-                    />
-                  ) : null}
-                </div>
-                <div className="p-5">
-                  <h3 className="font-display text-lg text-primary">{c.name}</h3>
-                  {c.description && (
-                    <p className="mt-1 text-sm text-muted-foreground">{c.description}</p>
-                  )}
-                  <a
-                    href={`https://wa.me/${wa}?text=${encodeURIComponent(`Hello S & J Baby Mart, I'd like to see what's available in ${c.name}.`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm font-bold text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  >
-                    Enquire about {c.name}
-                  </a>
-                </div>
-              </div>
+                {c.name}
+              </button>
             ))}
-            {categories.length === 0 && (
-              <p className="text-sm text-muted-foreground">Categories are being added soon.</p>
-            )}
           </div>
         </section>
 
-        {products.length > 0 && (
-          <section className="mt-14">
-            <h2 className="font-display text-2xl text-primary md:text-3xl">In store now</h2>
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {products.map((p) => (
-                <ProductCard key={p.id} product={p} />
+        {/* Controls */}
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:max-w-sm">
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <label htmlFor="product-search" className="sr-only">
+              Search products
+            </label>
+            <input
+              id="product-search"
+              type="search"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search products…"
+              className="w-full rounded-full border border-border bg-card py-2.5 pl-9 pr-4 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="sort" className="text-sm font-semibold text-muted-foreground">
+              Sort
+            </label>
+            <select
+              id="sort"
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              className="rounded-full border border-border bg-card px-4 py-2.5 text-sm font-semibold text-primary outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <option value="newest">Newest</option>
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+              <option value="name">Name A–Z</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Listing */}
+        <section className="mt-8" aria-live="polite">
+          <p className="text-sm text-muted-foreground">
+            {visible.length} {visible.length === 1 ? "product" : "products"}
+          </p>
+          <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {visible.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+          {visible.length === 0 && (
+            <p className="rounded-3xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
+              No products match your search. Try another category or keyword.
+            </p>
+          )}
+        </section>
+
+        {zones && zones.length > 0 && (
+          <section className="mt-14 rounded-3xl border border-border bg-card p-6 shadow-soft">
+            <h2 className="font-display text-xl text-primary">Delivery areas &amp; fees</h2>
+            <ul className="mt-4 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2 lg:grid-cols-3">
+              {zones.map((z) => (
+                <li key={z.id} className="flex items-center justify-between gap-3 rounded-xl bg-secondary px-4 py-2.5">
+                  <span className="font-semibold text-primary">{z.name}</span>
+                  <span>
+                    {formatKes(z.fee_kes)}
+                    {z.estimated_time ? ` · ${z.estimated_time}` : ""}
+                  </span>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
         )}
       </div>

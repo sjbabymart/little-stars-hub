@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as CartRouteImport } from './routes/cart'
 import { Route as ClinicRouteImport } from './routes/clinic'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as RedCarpetRouteImport } from './routes/red-carpet'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +32,11 @@ const SplatRoute = SplatRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClinicRoute = ClinicRouteImport.update({
@@ -52,60 +59,92 @@ const ShopRoute = ShopRouteImport.update({
   path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProductSlugRoute = ProductSlugRouteImport.update({
+  id: '/product/$slug',
+  path: '/product/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/cart': typeof CartRoute
   '/clinic': typeof ClinicRoute
   '/contact': typeof ContactRoute
   '/red-carpet': typeof RedCarpetRoute
   '/shop': typeof ShopRoute
+  '/product/$slug': typeof ProductSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/cart': typeof CartRoute
   '/clinic': typeof ClinicRoute
   '/contact': typeof ContactRoute
   '/red-carpet': typeof RedCarpetRoute
   '/shop': typeof ShopRoute
+  '/product/$slug': typeof ProductSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/cart': typeof CartRoute
   '/clinic': typeof ClinicRoute
   '/contact': typeof ContactRoute
   '/red-carpet': typeof RedCarpetRoute
   '/shop': typeof ShopRoute
+  '/product/$slug': typeof ProductSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/$' | '/about' | '/clinic' | '/contact' | '/red-carpet' | '/shop'
+    | '/'
+    | '/$'
+    | '/about'
+    | '/cart'
+    | '/clinic'
+    | '/contact'
+    | '/red-carpet'
+    | '/shop'
+    | '/product/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$' | '/about' | '/clinic' | '/contact' | '/red-carpet' | '/shop'
+  to:
+    | '/'
+    | '/$'
+    | '/about'
+    | '/cart'
+    | '/clinic'
+    | '/contact'
+    | '/red-carpet'
+    | '/shop'
+    | '/product/$slug'
   id:
     | '__root__'
     | '/'
     | '/$'
     | '/about'
+    | '/cart'
     | '/clinic'
     | '/contact'
     | '/red-carpet'
     | '/shop'
+    | '/product/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
+  CartRoute: typeof CartRoute
   ClinicRoute: typeof ClinicRoute
   ContactRoute: typeof ContactRoute
   RedCarpetRoute: typeof RedCarpetRoute
   ShopRoute: typeof ShopRoute
+  ProductSlugRoute: typeof ProductSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -129,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clinic': {
@@ -159,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/product/$slug': {
+      id: '/product/$slug'
+      path: '/product/$slug'
+      fullPath: '/product/$slug'
+      preLoaderRoute: typeof ProductSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -166,10 +219,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
+  CartRoute: CartRoute,
   ClinicRoute: ClinicRoute,
   ContactRoute: ContactRoute,
   RedCarpetRoute: RedCarpetRoute,
   ShopRoute: ShopRoute,
+  ProductSlugRoute: ProductSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

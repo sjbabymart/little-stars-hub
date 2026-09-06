@@ -161,7 +161,7 @@ function ClinicPage() {
         </div>
       </section>
 
-      <section className="bg-secondary">
+      <section id="appointment" className="scroll-mt-24 bg-secondary">
         <div className="mx-auto max-w-3xl px-4 py-14">
           <AppointmentRequestForm />
         </div>

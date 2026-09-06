@@ -10,6 +10,7 @@ import { AdminZones } from "@/components/admin/AdminZones";
 import { AdminRedCarpet } from "@/components/admin/AdminRedCarpet";
 import { AdminOrders } from "@/components/admin/AdminOrders";
 import { AdminAppointments } from "@/components/admin/AdminAppointments";
+import { AdminMessages } from "@/components/admin/AdminMessages";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -33,6 +34,7 @@ const tabs = [
   { id: "red-carpet", label: "Red Carpet" },
   { id: "orders", label: "Orders" },
   { id: "appointments", label: "Appointments" },
+  { id: "messages", label: "Messages" },
   { id: "settings", label: "Settings" },
 ] as const;
 
@@ -114,6 +116,7 @@ function AdminPage() {
         {tab === "red-carpet" && <AdminRedCarpet />}
         {tab === "orders" && <AdminOrders />}
         {tab === "appointments" && <AdminAppointments />}
+        {tab === "messages" && <AdminMessages />}
         {tab === "settings" && <AdminSettings />}
       </div>
     </div>

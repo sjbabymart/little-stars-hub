@@ -18,12 +18,8 @@ export function FloatingActions() {
       className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2.5"
     >
       <a
-        href={waLink(
-          "Hello Njau Children's Clinic, I would like to book an appointment for my child.",
-        )}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Book an appointment on WhatsApp"
+        href="/clinic#appointment"
+        aria-label="Book an appointment"
         className={`group inline-flex items-center gap-2 rounded-full bg-sunset px-4 py-3 text-sm font-bold text-sunset-foreground shadow-lift transition-transform hover:-translate-y-0.5 ${focusRing}`}
       >
         <CalendarHeart className="size-5" aria-hidden="true" />

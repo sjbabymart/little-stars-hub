@@ -26,7 +26,7 @@ export const Route = createFileRoute("/red-carpet")({
 });
 
 function RedCarpetPage() {
-  const { data: images } = useQuery(redCarpetQuery);
+  const { data: images, isPending } = useQuery(redCarpetQuery);
   const { data: site } = useQuery(siteContentQuery);
   const wa = site?.contact.whatsapp ?? "254711706413";
 
@@ -58,7 +58,11 @@ function RedCarpetPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-14">
-        {photos.length === 0 ? (
+        {isPending ? (
+          <div className="mx-auto max-w-md rounded-[2rem] border border-border bg-card p-10 text-center text-sm text-muted-foreground">
+            Loading gallery…
+          </div>
+        ) : photos.length === 0 ? (
           <div className="mx-auto max-w-md rounded-[2rem] border border-border bg-card p-10 text-center">
             <Camera className="mx-auto size-10 text-muted-foreground" aria-hidden="true" />
             <h2 className="mt-4 font-display text-xl text-primary">No photos yet</h2>

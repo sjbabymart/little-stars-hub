@@ -27,12 +27,16 @@ type AppointmentRow = {
   child_name: string;
   child_age: string | null;
   phone: string;
+  email: string | null;
   service: string;
   preferred_date: string;
   preferred_time: string | null;
   confirmed_date: string | null;
   confirmed_time: string | null;
+  message: string | null;
+  admin_notes: string | null;
   status: string;
+  created_at: string;
 };
 
 const statusLabel = (s: string) => s.replace(/_/g, " ");
@@ -243,12 +247,25 @@ export function AdminAppointments() {
                       {a.parent_name} · {a.child_name}
                       {a.child_age ? ` (${a.child_age})` : ""}
                     </p>
-                    <p className="text-xs text-muted-foreground">{a.phone}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {a.phone}
+                      {a.email ? ` · ${a.email}` : ""}
+                    </p>
                     <p className="mt-1 text-xs text-muted-foreground">{a.service}</p>
                     <p className="text-xs text-muted-foreground">
                       Preferred: {formatDate(a.preferred_date)}
                       {a.preferred_time ? ` · ${a.preferred_time}` : ""}
                     </p>
+                    {a.message && (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Note: {a.message}
+                      </p>
+                    )}
+                    {a.admin_notes && (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Staff notes: {a.admin_notes}
+                      </p>
+                    )}
                   </div>
                   <Badge variant="outline">{statusLabel(a.status)}</Badge>
                 </div>
@@ -282,10 +299,21 @@ export function AdminAppointments() {
                     <td className="p-3">
                       {a.child_name}
                       <div className="text-xs text-muted-foreground">{a.parent_name}</div>
-                      <div className="text-xs text-muted-foreground">{a.phone}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {a.phone}
+                        {a.email ? ` · ${a.email}` : ""}
+                      </div>
                     </td>
                     <td className="p-3">
                       <Badge variant="outline">{a.service}</Badge>
+                      {a.message && (
+                        <div className="mt-1 text-xs text-muted-foreground">{a.message}</div>
+                      )}
+                      {a.admin_notes && (
+                        <div className="mt-1 text-xs text-muted-foreground">
+                          Staff notes: {a.admin_notes}
+                        </div>
+                      )}
                     </td>
                     <td className="p-3 text-muted-foreground">
                       {a.confirmed_date ? formatDate(a.confirmed_date) : formatDate(a.preferred_date)}

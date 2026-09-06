@@ -42,3 +42,19 @@ export async function signImageUrls(
     }),
   );
 }
+
+// Resolve a list of storage paths to short-lived signed URLs. Public paths
+// ("/...") and absolute URLs pass through unchanged.
+export async function signImagePaths(
+  client: SupabaseClient<Database>,
+  bucket: string,
+  paths: (string | null | undefined)[],
+): Promise<string[]> {
+  return Promise.all(
+    paths.map(async (url) => {
+      if (!url || url.startsWith("/") || url.startsWith("http")) return url ?? "";
+      const { data } = await client.storage.from(bucket).createSignedUrl(url, 60 * 60);
+      return data?.signedUrl ?? url;
+    }),
+  );
+}

@@ -45,7 +45,7 @@ function Index() {
   const { data: catalog } = useQuery(catalogQuery);
 
   const phone = site?.contact.phone ?? "+254711706413";
-  const email = site?.contact.email ?? "info@sjclinic.co.ke";
+  const email = site?.contact.email ?? "info@sjbaby.co.ke";
   const address = site?.contact.address ?? "Nairobi, Kenya";
   const wa = site?.contact.whatsapp ?? "254711706413";
   const waLink = `https://wa.me/${wa}?text=${encodeURIComponent("Hello S & J Baby Mart, I'd like to make an enquiry.")}`;

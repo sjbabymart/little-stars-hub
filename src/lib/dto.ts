@@ -20,6 +20,7 @@ export type Product = {
   price_kes: number;
   compare_at_price_kes: number | null;
   image_url: string | null;
+  images?: string[];
   stock: number;
   sizes: string[];
   featured: boolean;

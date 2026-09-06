@@ -21,7 +21,7 @@ export function SiteFooter() {
   const { data } = useQuery(siteContentQuery);
   const contact = data?.contact;
   const phone = contact?.phone ?? "+254711706413";
-  const email = contact?.email ?? "info@sjclinic.co.ke";
+  const email = contact?.email ?? "info@sjbaby.co.ke";
   const address = contact?.address ?? "Nairobi, Kenya";
   const hours = contact?.hours ?? "Mon–Sat, 9:00am – 6:00pm";
 

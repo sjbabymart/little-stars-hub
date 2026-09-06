@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -45,6 +45,9 @@ function ProductPage() {
   const { addItem } = useCart();
   const [size, setSize] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
+  const [activeImg, setActiveImg] = useState(0);
+
+  useEffect(() => setActiveImg(0), [slug]);
 
   // Prefer loader-prefetched data so the page renders instantly on client
   // navigation (avoids a brief "Product not found" flash before the query loads).
@@ -69,6 +72,12 @@ function ProductPage() {
     );
   }
 
+  const gallery =
+    product.images && product.images.length > 0
+      ? product.images
+      : product.image_url
+        ? [product.image_url]
+        : [];
   const soldOut = product.stock <= 0;
   const discounted =
     product.compare_at_price_kes != null && product.compare_at_price_kes > product.price_kes;
@@ -104,16 +113,35 @@ function ProductPage() {
       </nav>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
-        <div className="overflow-hidden rounded-[2rem] border border-border bg-muted">
-          {product.image_url ? (
-            <img
-              src={product.image_url}
-              alt={product.name}
-              className="aspect-4/5 size-full object-cover"
-            />
-          ) : (
-            <div className="grid aspect-4/5 place-items-center text-sm text-muted-foreground">
-              No image
+        <div>
+          <div className="overflow-hidden rounded-[2rem] border border-border bg-muted">
+            {gallery[activeImg] ? (
+              <img
+                src={gallery[activeImg]}
+                alt={product.name}
+                className="aspect-4/5 size-full object-cover"
+              />
+            ) : (
+              <div className="grid aspect-4/5 place-items-center text-sm text-muted-foreground">
+                No image
+              </div>
+            )}
+          </div>
+          {gallery.length > 1 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {gallery.map((src, i) => (
+                <button
+                  key={src}
+                  type="button"
+                  onClick={() => setActiveImg(i)}
+                  aria-label={`View image ${i + 1}`}
+                  className={`overflow-hidden rounded-xl border-2 ${
+                    i === activeImg ? "border-primary" : "border-transparent"
+                  }`}
+                >
+                  <img src={src} alt="" className="size-16 object-cover" />
+                </button>
+              ))}
             </div>
           )}
         </div>

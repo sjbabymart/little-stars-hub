@@ -17,7 +17,7 @@ export function LegalPage({
   const contact = data?.contact;
   const address = contact?.address ?? "Nairobi, Kenya";
   const phone = contact?.phone ?? "+254711706413";
-  const email = contact?.email ?? "info@sjclinic.co.ke";
+  const email = contact?.email ?? "info@sjbaby.co.ke";
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">

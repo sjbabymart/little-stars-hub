@@ -69,23 +69,24 @@ export const adminListProducts = createServerFn({ method: "GET" })
     const { data } = await context.supabase
       .from("products")
       .select(
-        "id, category_id, name, slug, description, price_kes, compare_at_price_kes, image_url, stock, sizes, featured, active, created_at, categories(name)",
+        "id, category_id, name, slug, description, price_kes, compare_at_price_kes, image_url, images, stock, sizes, featured, active, created_at, categories(name)",
       )
       .order("created_at", { ascending: false });
     const rows = (data ?? []) as unknown as {
       image_url: string | null;
+      images: string[] | null;
       price_kes: number | string;
       compare_at_price_kes: number | string | null;
       categories?: { name: string } | null;
       sizes: string[] | null;
     }[];
-    await signImageUrls(context.supabase, "product-images", rows);
     return rows.map((r) => ({
       ...(r as Record<string, unknown>),
       price_kes: Number(r.price_kes),
       compare_at_price_kes:
         r.compare_at_price_kes == null ? null : Number(r.compare_at_price_kes),
       sizes: r.sizes ?? [],
+      images: r.images ?? [],
       category_name: r.categories?.name ?? null,
       categories: undefined,
     }));
@@ -108,7 +109,7 @@ export const adminSaveProduct = createServerFn({ method: "POST" })
         description: z.string().trim().max(2000).optional().or(z.literal("")),
         priceKes: z.number().min(0).max(10_000_000),
         compareAtPriceKes: z.number().min(0).max(10_000_000).nullable(),
-        imageUrl: z.string().trim().max(500).nullable(),
+        images: z.array(z.string().trim().min(1).max(500)).max(3),
         stock: z.number().int().min(0).max(100000),
         sizes: z.array(z.string().trim().min(1).max(40)).max(20),
         featured: z.boolean(),
@@ -125,7 +126,8 @@ export const adminSaveProduct = createServerFn({ method: "POST" })
       description: data.description || null,
       price_kes: data.priceKes,
       compare_at_price_kes: data.compareAtPriceKes,
-      image_url: data.imageUrl,
+      image_url: data.images[0] ?? null,
+      images: data.images,
       stock: data.stock,
       sizes: data.sizes,
       featured: data.featured,

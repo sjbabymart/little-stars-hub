@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createPublicClient, signImageUrls } from "./supabase-public.server";
+import { createPublicClient, signImagePaths, signImageUrls } from "./supabase-public.server";
 import type {
   Category,
   ClinicSettings,
@@ -15,7 +15,7 @@ import type {
 const DEFAULT_CONTACT: ContactSettings = {
   phone: "+254711706413",
   whatsapp: "254711706413",
-  email: "info@sjclinic.co.ke",
+  email: "info@sjbaby.co.ke",
   address: "Nairobi, Kenya",
   hours: "Mon–Sat, 9:00am – 6:00pm",
 };
@@ -61,6 +61,7 @@ type ProductRow = {
   price_kes: number | string;
   compare_at_price_kes: number | string | null;
   image_url: string | null;
+  images: string[] | null;
   stock: number;
   sizes: string[] | null;
   featured: boolean;
@@ -81,6 +82,7 @@ function toProduct(row: ProductRow): Product {
     compare_at_price_kes:
       row.compare_at_price_kes == null ? null : Number(row.compare_at_price_kes),
     image_url: row.image_url,
+    images: row.images ?? [],
     stock: row.stock,
     sizes: row.sizes ?? [],
     featured: row.featured,
@@ -101,16 +103,20 @@ export const getCatalog = createServerFn({ method: "GET" }).handler(
       supabase
         .from("products")
         .select(
-          "id, category_id, name, slug, description, price_kes, compare_at_price_kes, image_url, stock, sizes, featured, active, created_at, categories(name)",
+          "id, category_id, name, slug, description, price_kes, compare_at_price_kes, image_url, images, stock, sizes, featured, active, created_at, categories(name)",
         )
         .eq("active", true)
         .order("created_at", { ascending: false }),
     ]);
     const rows = (prods ?? []) as unknown as ProductRow[];
     await signImageUrls(supabase, "product-images", rows);
+    const products = rows.map(toProduct);
+    for (const p of products) {
+      if (p.images?.length) p.images = await signImagePaths(supabase, "product-images", p.images);
+    }
     return {
       categories: (cats ?? []) as Category[],
-      products: rows.map(toProduct),
+      products,
     };
   },
 );
@@ -122,7 +128,7 @@ export const getProductBySlug = createServerFn({ method: "GET" })
     const { data: row } = await supabase
       .from("products")
       .select(
-        "id, category_id, name, slug, description, price_kes, compare_at_price_kes, image_url, stock, sizes, featured, active, created_at, categories(name)",
+        "id, category_id, name, slug, description, price_kes, compare_at_price_kes, image_url, images, stock, sizes, featured, active, created_at, categories(name)",
       )
       .eq("slug", data.slug)
       .eq("active", true)
@@ -134,7 +140,7 @@ export const getProductBySlug = createServerFn({ method: "GET" })
     const { data: relatedRows } = await supabase
       .from("products")
       .select(
-        "id, category_id, name, slug, description, price_kes, compare_at_price_kes, image_url, stock, sizes, featured, active, created_at, categories(name)",
+        "id, category_id, name, slug, description, price_kes, compare_at_price_kes, image_url, images, stock, sizes, featured, active, created_at, categories(name)",
       )
       .eq("active", true)
       .neq("id", productRow.id)
@@ -142,7 +148,15 @@ export const getProductBySlug = createServerFn({ method: "GET" })
       .limit(4);
     const related = (relatedRows ?? []) as unknown as ProductRow[];
     await signImageUrls(supabase, "product-images", related);
-    return { product: toProduct(productRow), related: related.map(toProduct) };
+    const product = toProduct(productRow);
+    if (product.images?.length) {
+      product.images = await signImagePaths(supabase, "product-images", product.images);
+    }
+    const relatedProducts = related.map(toProduct);
+    for (const p of relatedProducts) {
+      if (p.images?.length) p.images = await signImagePaths(supabase, "product-images", p.images);
+    }
+    return { product, related: relatedProducts };
   });
 
 export const getDeliveryZones = createServerFn({ method: "GET" }).handler(

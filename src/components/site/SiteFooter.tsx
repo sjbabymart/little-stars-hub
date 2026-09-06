@@ -95,9 +95,35 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <p className="mx-auto max-w-7xl px-4 py-5 text-xs text-navy-foreground/60">
-          © {new Date().getFullYear()} S &amp; J Baby Mart · Njau Children&apos;s Clinic. All rights
-          reserved.
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-5 text-xs text-navy-foreground/60 sm:flex-row">
+          <p>
+            © {new Date().getFullYear()} S &amp; J Baby Mart · Njau Children&apos;s Clinic. All
+            rights reserved.
+          </p>
+          <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2" aria-label="Legal">
+            <a href="/privacy" className="hover:text-accent">
+              Privacy Policy
+            </a>
+            <a href="/terms" className="hover:text-accent">
+              Terms &amp; Conditions
+            </a>
+            <a href="/returns" className="hover:text-accent">
+              Returns &amp; Exchanges
+            </a>
+          </nav>
+        </div>
+      </div>
+      <div className="border-t border-white/10">
+        <p className="mx-auto max-w-7xl px-4 py-4 text-xs text-navy-foreground/60">
+          This website was designed by{" "}
+          <a
+            href="https://wa.me/254790425578"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold underline underline-offset-2 hover:text-accent"
+          >
+            Novakel Technologies
+          </a>
         </p>
       </div>
     </footer>

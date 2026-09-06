@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { AdminProducts } from "@/components/admin/AdminProducts";
 import { AdminZones } from "@/components/admin/AdminZones";
 import { AdminRedCarpet } from "@/components/admin/AdminRedCarpet";
-import { AdminAppointments, AdminOrders } from "@/components/admin/AdminOrders";
+import { AdminOrders } from "@/components/admin/AdminOrders";
+import { AdminAppointments } from "@/components/admin/AdminAppointments";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 
 export const Route = createFileRoute("/_authenticated/admin")({

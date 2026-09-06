@@ -275,7 +275,7 @@ export const adminListAppointments = createServerFn({ method: "GET" })
     const { data } = await context.supabase
       .from("appointments")
       .select(
-        "id, parent_name, phone, email, child_name, child_age, service, preferred_date, preferred_time, message, status, admin_notes, created_at",
+        "id, parent_name, phone, email, child_name, child_age, service, preferred_date, preferred_time, confirmed_date, confirmed_time, message, status, admin_notes, created_at",
       )
       .order("preferred_date", { ascending: true })
       .limit(300);
@@ -290,14 +290,26 @@ export const adminUpdateAppointment = createServerFn({ method: "POST" })
         id: uuid,
         status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
         adminNotes: z.string().trim().max(800).optional().or(z.literal("")),
+        confirmedDate: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/, "Choose a valid date")
+          .optional()
+          .or(z.literal("")),
+        confirmedTime: z.string().trim().max(40).optional().or(z.literal("")),
       })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
+    const payload: Record<string, unknown> = {
+      status: data.status,
+      admin_notes: data.adminNotes || null,
+    };
+    if (data.confirmedDate) payload.confirmed_date = data.confirmedDate;
+    if (data.confirmedTime) payload.confirmed_time = data.confirmedTime;
     const { error } = await context.supabase
       .from("appointments")
-      .update({ status: data.status, admin_notes: data.adminNotes || null })
+      .update(payload)
       .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };

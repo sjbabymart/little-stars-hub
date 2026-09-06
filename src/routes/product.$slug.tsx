@@ -39,14 +39,17 @@ export const Route = createFileRoute("/product/$slug")({
 
 function ProductPage() {
   const { slug } = Route.useParams();
+  const loaderData = Route.useLoaderData();
   const { data } = useQuery(productQuery(slug));
   const { data: site } = useQuery(siteContentQuery);
   const { addItem } = useCart();
   const [size, setSize] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
 
-  const product = data?.product ?? null;
-  const related = data?.related ?? [];
+  // Prefer loader-prefetched data so the page renders instantly on client
+  // navigation (avoids a brief "Product not found" flash before the query loads).
+  const product = data?.product ?? loaderData?.product ?? null;
+  const related = data?.related ?? loaderData?.related ?? [];
   const wa = site?.contact.whatsapp ?? "254711706413";
 
   if (!product) {

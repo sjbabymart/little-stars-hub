@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Clock, Compass, Heart, Mail, MapPin, Phone, Target } from "lucide-react";
+import { Clock, Compass, Heart, Mail, MapPin, Phone, Sparkles, Target } from "lucide-react";
 import storeInterior from "@/assets/store-interior.jpg";
 import { siteContentQuery } from "@/lib/queries";
 
@@ -11,13 +11,13 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Our mission, vision, store hours and Nairobi location — S & J Baby Mart for baby clothing and essentials, with Njau Children's Clinic for paediatric care.",
+          "The story of S & J Baby Mart and Njau Children's Clinic — a family-run baby store and paediatric clinic in Nairobi, Kenya.",
       },
       { property: "og:title", content: "About S & J Baby Mart & Njau Children's Clinic" },
       {
         property: "og:description",
         content:
-          "Baby clothing, essentials and gentle paediatric care under one roof in Nairobi — read our mission, vision and visiting hours.",
+          "A family-run baby and children's store alongside a gentle paediatric clinic — read our story, mission and visiting hours.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/about" },
@@ -44,12 +44,12 @@ function AboutPage() {
             <Heart className="size-3.5" aria-hidden="true" /> About us
           </span>
           <h1 className="mt-5 max-w-3xl font-display text-4xl leading-tight text-primary md:text-5xl">
-            Caring for children, supporting families
+            A family shop for little ones, built on care
           </h1>
           <p className="mt-4 max-w-2xl text-base text-muted-foreground">
-            S &amp; J Baby Mart brings together quality baby clothing and essentials with the gentle
-            paediatric care of Njau Children&apos;s Clinic — so families in Nairobi can shop and get
-            trusted care in one place.
+            S &amp; J Baby Mart and Njau Children&apos;s Clinic are two parts of one family promise —
+            that every child in our community is dressed comfortably, cared for gently, and
+            celebrated wholeheartedly.
           </p>
         </div>
       </section>
@@ -62,15 +62,38 @@ function AboutPage() {
             className="size-full object-cover"
           />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-5 text-sm leading-relaxed text-muted-foreground">
+          <h2 className="font-display text-3xl text-primary">Our story</h2>
+          <p>
+            S &amp; J Baby Mart began the way most family businesses do — at home, with a simple
+            wish: that every child should be dressed comfortably, beautifully and affordably. What
+            started as carefully picked outfits for our own little ones grew into a baby and
+            children&apos;s store that parents across Nairobi now trust.
+          </p>
+          <p>
+            Beside the shop, Njau Children&apos;s Clinic was born from the same belief — that caring
+            for a child means caring for the whole family. From routine check-ups, immunisation and
+            growth monitoring to advice when a little one is unwell, our clinic offers gentle,
+            professional paediatric care.
+          </p>
+          <p>
+            Today the two sit side by side, under one roof, so busy parents can shop for quality
+            children&apos;s clothing and essentials and access trusted healthcare in a single visit.
+            It&apos;s retail with heart, and healthcare with warmth.
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-secondary/60">
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-14 md:grid-cols-2">
           <div className="rounded-3xl border border-border bg-card p-6 shadow-soft">
             <span className="inline-flex size-11 items-center justify-center rounded-2xl bg-secondary text-leaf">
               <Target className="size-5" aria-hidden="true" />
             </span>
             <h2 className="mt-4 font-display text-2xl text-primary">Our mission</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              To make quality baby clothing, essentials and trusted paediatric care easy to access
-              for every family we serve — with honest pricing, warm service and advice parents can
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              To make quality baby clothing, essentials and trusted paediatric care easy to reach
+              for every family we serve — with honest pricing, warm service, and advice parents can
               rely on.
             </p>
           </div>
@@ -79,9 +102,9 @@ function AboutPage() {
               <Compass className="size-5" aria-hidden="true" />
             </span>
             <h2 className="mt-4 font-display text-2xl text-primary">Our vision</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              To be the family destination parents in Nairobi turn to first — where a child can be
-              dressed, cared for and celebrated, from newborn days through the early years.
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              To be the family destination Nairobi parents turn to first — where a child can be
+              dressed, cared for and celebrated, from their very first days through the early years.
             </p>
           </div>
         </div>
@@ -124,10 +147,22 @@ function AboutPage() {
           <div className="rounded-[2rem] bg-white/5 p-8">
             <h2 className="font-display text-2xl">What we offer</h2>
             <ul className="mt-4 space-y-3 text-sm opacity-90">
-              <li>Baby clothing, newborn essentials, footwear and accessories</li>
-              <li>Delivery across Nairobi, or pick up your order in store</li>
-              <li>Paediatric consultations, immunisation and growth checks at the clinic</li>
-              <li>The Red Carpet gallery celebrating our little customers</li>
+              <li className="flex items-start gap-2">
+                <Sparkles className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
+                Baby clothing, newborn essentials, footwear and accessories
+              </li>
+              <li className="flex items-start gap-2">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
+                Delivery across Nairobi, or pick up your order in store
+              </li>
+              <li className="flex items-start gap-2">
+                <Heart className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
+                Paediatric consultations, immunisation and growth checks at the clinic
+              </li>
+              <li className="flex items-start gap-2">
+                <Sparkles className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
+                The Red Carpet gallery celebrating our little customers
+              </li>
             </ul>
             <div className="mt-7 flex flex-wrap gap-3">
               <a

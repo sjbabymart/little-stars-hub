@@ -103,6 +103,8 @@ export type AppointmentDto = {
   service: string;
   preferred_date: string;
   preferred_time: string | null;
+  confirmed_date: string | null;
+  confirmed_time: string | null;
   message: string | null;
   status: string;
   admin_notes: string | null;

@@ -110,35 +110,38 @@ export const placeOrder = createServerFn({ method: "POST" })
     const orderNumber = makeOrderNumber();
     const total = subtotal + deliveryFee;
 
-    const { data: order, error: orderError } = await supabase
-      .from("orders")
-      .insert({
-        order_number: orderNumber,
-        user_id: userId,
-        customer_name: data.customerName,
-        phone: data.phone,
-        email: data.email || null,
-        delivery_method: data.deliveryMethod,
-        delivery_zone_id: zoneId,
-        address: data.address || null,
-        subtotal_kes: subtotal,
-        delivery_fee_kes: deliveryFee,
-        total_kes: total,
-        payment_method: data.paymentMethod,
-        notes: data.notes || null,
-      })
-      .select("id, order_number, created_at")
-      .single();
-    if (orderError || !order) throw new Error("Could not place your order. Please try again.");
+    // Generate the order id server-side and insert without a `.select()` return:
+    // anonymous shoppers have INSERT (but not SELECT) access on `orders`, so a
+    // PostgREST `insert(...).select().single()` fails after the row is written.
+    const orderId = crypto.randomUUID();
+    const createdAt = new Date().toISOString();
+
+    const { error: orderError } = await supabase.from("orders").insert({
+      id: orderId,
+      order_number: orderNumber,
+      user_id: userId,
+      customer_name: data.customerName,
+      phone: data.phone,
+      email: data.email || null,
+      delivery_method: data.deliveryMethod,
+      delivery_zone_id: zoneId,
+      address: data.address || null,
+      subtotal_kes: subtotal,
+      delivery_fee_kes: deliveryFee,
+      total_kes: total,
+      payment_method: data.paymentMethod,
+      notes: data.notes || null,
+    });
+    if (orderError) throw new Error("Could not place your order. Please try again.");
 
     const { error: itemsError } = await supabase
       .from("order_items")
-      .insert(items.map((i) => ({ ...i, order_id: order.id })));
+      .insert(items.map((i) => ({ ...i, order_id: orderId })));
     if (itemsError) throw new Error("Could not place your order. Please try again.");
 
     return {
-      id: order.id,
-      order_number: order.order_number,
+      id: orderId,
+      order_number: orderNumber,
       customer_name: data.customerName,
       phone: data.phone,
       email: data.email || null,
@@ -151,7 +154,7 @@ export const placeOrder = createServerFn({ method: "POST" })
       status: "pending",
       payment_method: data.paymentMethod,
       notes: data.notes || null,
-      created_at: order.created_at,
+      created_at: createdAt,
       items,
     };
   });

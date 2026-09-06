@@ -19,8 +19,11 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ClinicRouteImport } from './routes/clinic'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as OrderConfirmedRouteImport } from './routes/order-confirmed'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RedCarpetRouteImport } from './routes/red-carpet'
+import { Route as ReturnsRouteImport } from './routes/returns'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 
@@ -73,14 +76,29 @@ const OrderConfirmedRoute = OrderConfirmedRouteImport.update({
   path: '/order-confirmed',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RedCarpetRoute = RedCarpetRouteImport.update({
   id: '/red-carpet',
   path: '/red-carpet',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReturnsRoute = ReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -104,8 +122,11 @@ export interface FileRoutesByFullPath {
   '/clinic': typeof ClinicRoute
   '/contact': typeof ContactRoute
   '/order-confirmed': typeof OrderConfirmedRoute
+  '/privacy': typeof PrivacyRoute
   '/red-carpet': typeof RedCarpetRoute
+  '/returns': typeof ReturnsRoute
   '/shop': typeof ShopRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/product/$slug': typeof ProductSlugRoute
 }
@@ -119,8 +140,11 @@ export interface FileRoutesByTo {
   '/clinic': typeof ClinicRoute
   '/contact': typeof ContactRoute
   '/order-confirmed': typeof OrderConfirmedRoute
+  '/privacy': typeof PrivacyRoute
   '/red-carpet': typeof RedCarpetRoute
+  '/returns': typeof ReturnsRoute
   '/shop': typeof ShopRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/product/$slug': typeof ProductSlugRoute
 }
@@ -136,8 +160,11 @@ export interface FileRoutesById {
   '/clinic': typeof ClinicRoute
   '/contact': typeof ContactRoute
   '/order-confirmed': typeof OrderConfirmedRoute
+  '/privacy': typeof PrivacyRoute
   '/red-carpet': typeof RedCarpetRoute
+  '/returns': typeof ReturnsRoute
   '/shop': typeof ShopRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/product/$slug': typeof ProductSlugRoute
 }
@@ -153,8 +180,11 @@ export interface FileRouteTypes {
     | '/clinic'
     | '/contact'
     | '/order-confirmed'
+    | '/privacy'
     | '/red-carpet'
+    | '/returns'
     | '/shop'
+    | '/terms'
     | '/admin'
     | '/product/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -168,8 +198,11 @@ export interface FileRouteTypes {
     | '/clinic'
     | '/contact'
     | '/order-confirmed'
+    | '/privacy'
     | '/red-carpet'
+    | '/returns'
     | '/shop'
+    | '/terms'
     | '/admin'
     | '/product/$slug'
   id:
@@ -184,8 +217,11 @@ export interface FileRouteTypes {
     | '/clinic'
     | '/contact'
     | '/order-confirmed'
+    | '/privacy'
     | '/red-carpet'
+    | '/returns'
     | '/shop'
+    | '/terms'
     | '/_authenticated/admin'
     | '/product/$slug'
   fileRoutesById: FileRoutesById
@@ -201,8 +237,11 @@ export interface RootRouteChildren {
   ClinicRoute: typeof ClinicRoute
   ContactRoute: typeof ContactRoute
   OrderConfirmedRoute: typeof OrderConfirmedRoute
+  PrivacyRoute: typeof PrivacyRoute
   RedCarpetRoute: typeof RedCarpetRoute
+  ReturnsRoute: typeof ReturnsRoute
   ShopRoute: typeof ShopRoute
+  TermsRoute: typeof TermsRoute
   ProductSlugRoute: typeof ProductSlugRoute
 }
 
@@ -278,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderConfirmedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/red-carpet': {
       id: '/red-carpet'
       path: '/red-carpet'
@@ -285,11 +331,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RedCarpetRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/returns': {
+      id: '/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof ReturnsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -331,8 +391,11 @@ const rootRouteChildren: RootRouteChildren = {
   ClinicRoute: ClinicRoute,
   ContactRoute: ContactRoute,
   OrderConfirmedRoute: OrderConfirmedRoute,
+  PrivacyRoute: PrivacyRoute,
   RedCarpetRoute: RedCarpetRoute,
+  ReturnsRoute: ReturnsRoute,
   ShopRoute: ShopRoute,
+  TermsRoute: TermsRoute,
   ProductSlugRoute: ProductSlugRoute,
 }
 export const routeTree = rootRouteImport

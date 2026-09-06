@@ -459,6 +459,43 @@ const clinicSchema = z.object({
   services: z.array(z.string().trim().min(2).max(120)).max(20),
 });
 
+export const adminGetSettings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { data } = await context.supabase
+      .from("site_settings")
+      .select("key, value")
+      .in("key", ["contact", "shop", "clinic"]);
+    const map = new Map(
+      (data ?? []).map((r) => [r.key, r.value as Record<string, unknown>]),
+    );
+    const contact = (map.get("contact") ?? {}) as Record<string, unknown>;
+    const shop = (map.get("shop") ?? {}) as Record<string, unknown>;
+    const clinic = (map.get("clinic") ?? {}) as Record<string, unknown>;
+    return {
+      contact: {
+        phone: (contact.phone as string) ?? "",
+        whatsapp: (contact.whatsapp as string) ?? "",
+        email: (contact.email as string) ?? "",
+        address: (contact.address as string) ?? "",
+        hours: (contact.hours as string) ?? "",
+      },
+      shop: {
+        announcement: (shop.announcement as string) ?? "",
+        free_delivery_threshold: Number(shop.free_delivery_threshold ?? 0),
+        currency: (shop.currency as string) ?? "KSh",
+      },
+      clinic: {
+        name: (clinic.name as string) ?? "",
+        tagline: (clinic.tagline as string) ?? "",
+        hours: (clinic.hours as string) ?? "",
+        phone: (clinic.phone as string) ?? "",
+        services: (clinic.services as string[]) ?? [],
+      },
+    };
+  });
+
 export const adminUpdateSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>

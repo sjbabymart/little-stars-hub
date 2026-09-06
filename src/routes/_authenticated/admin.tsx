@@ -9,6 +9,7 @@ import { AdminProducts } from "@/components/admin/AdminProducts";
 import { AdminZones } from "@/components/admin/AdminZones";
 import { AdminRedCarpet } from "@/components/admin/AdminRedCarpet";
 import { AdminAppointments, AdminOrders } from "@/components/admin/AdminOrders";
+import { AdminSettings } from "@/components/admin/AdminSettings";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -31,6 +32,7 @@ const tabs = [
   { id: "red-carpet", label: "Red Carpet" },
   { id: "orders", label: "Orders" },
   { id: "appointments", label: "Appointments" },
+  { id: "settings", label: "Settings" },
 ] as const;
 
 type TabId = (typeof tabs)[number]["id"];
@@ -111,6 +113,7 @@ function AdminPage() {
         {tab === "red-carpet" && <AdminRedCarpet />}
         {tab === "orders" && <AdminOrders />}
         {tab === "appointments" && <AdminAppointments />}
+        {tab === "settings" && <AdminSettings />}
       </div>
     </div>
   );

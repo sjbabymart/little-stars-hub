@@ -119,9 +119,26 @@ export const adminSaveProduct = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
+
+    // Ensure the slug is unique so a new/renamed product never hits the
+    // products_slug_key constraint.
+    let slug = data.slug;
+    const { data: existing } = await context.supabase
+      .from("products")
+      .select("id, slug")
+      .like("slug", `${slug}%`);
+    const taken = (existing ?? [])
+      .filter((r) => r.id !== data.id)
+      .map((r) => r.slug);
+    if (taken.includes(slug)) {
+      let i = 2;
+      while (taken.includes(`${slug}-${i}`)) i++;
+      slug = `${slug}-${i}`;
+    }
+
     const payload = {
       name: data.name,
-      slug: data.slug,
+      slug,
       category_id: data.categoryId,
       description: data.description || null,
       price_kes: data.priceKes,

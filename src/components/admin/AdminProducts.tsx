@@ -42,7 +42,7 @@ type FormState = {
   categoryId: string;
   description: string;
   price: string;
-  compareAt: string;
+  discountPrice: string;
   hasDiscount: boolean;
   images: string[];
   stock: string;
@@ -57,7 +57,7 @@ const emptyForm: FormState = {
   categoryId: "",
   description: "",
   price: "",
-  compareAt: "",
+  discountPrice: "",
   hasDiscount: false,
   images: [],
   stock: "0",
@@ -138,17 +138,25 @@ export function AdminProducts() {
   });
 
   const save = useMutation({
-    mutationFn: (f: FormState) =>
-      adminSaveProduct({
+    mutationFn: (f: FormState) => {
+      const originalPrice = Number(f.price) || 0;
+      const enteredDiscount =
+        f.hasDiscount && f.discountPrice.trim() !== "" ? Number(f.discountPrice) : null;
+      let priceKes = originalPrice;
+      let compareAtPriceKes: number | null = null;
+      if (enteredDiscount != null && enteredDiscount < originalPrice) {
+        priceKes = enteredDiscount;
+        compareAtPriceKes = originalPrice;
+      }
+      return adminSaveProduct({
         data: {
           ...(f.id ? { id: f.id } : {}),
           name: f.name.trim(),
           slug: slugify(f.slug || f.name),
           categoryId: f.categoryId || null,
           description: f.description.trim(),
-          priceKes: Number(f.price) || 0,
-          compareAtPriceKes:
-            f.hasDiscount && f.compareAt.trim() !== "" ? Number(f.compareAt) : null,
+          priceKes,
+          compareAtPriceKes,
           images: f.images,
           stock: Number(f.stock) || 0,
           sizes: f.sizes
@@ -158,7 +166,8 @@ export function AdminProducts() {
           featured: f.featured,
           active: f.active,
         },
-      }),
+      });
+    },
     onSuccess: () => {
       toast.success("Product saved");
       setForm(null);
@@ -188,8 +197,12 @@ export function AdminProducts() {
       slug: p.slug,
       categoryId: p.category_id ?? "",
       description: p.description ?? "",
-      price: p.price_kes ? String(p.price_kes) : "",
-      compareAt: p.compare_at_price_kes == null ? "" : String(p.compare_at_price_kes),
+      price: p.compare_at_price_kes != null
+        ? String(p.compare_at_price_kes)
+        : p.price_kes
+          ? String(p.price_kes)
+          : "",
+      discountPrice: p.compare_at_price_kes != null ? String(p.price_kes) : "",
       hasDiscount: p.compare_at_price_kes != null,
       images: p.images ?? [],
       stock: String(p.stock),
@@ -331,7 +344,7 @@ export function AdminProducts() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="p-price">
-              Price (KES) <span className="text-muted-foreground">(optional)</span>
+              Original price (KES) <span className="text-muted-foreground">(optional)</span>
             </Label>
             <Input
               id="p-price"
@@ -353,18 +366,18 @@ export function AdminProducts() {
             </Label>
             {form.hasDiscount && (
               <Input
-                id="p-compare"
+                id="p-discount"
                 type="number"
                 min="0"
                 step="1"
-                value={form.compareAt}
-                onChange={(e) => setForm({ ...form, compareAt: e.target.value })}
-                placeholder="Original (compare-at) price"
+                value={form.discountPrice}
+                onChange={(e) => setForm({ ...form, discountPrice: e.target.value })}
+                placeholder="Sale price (lower than original)"
               />
             )}
             {form.hasDiscount && (
               <p className="text-xs text-muted-foreground">
-                The original price will show struck through next to the discounted price.
+                Customers pay the discounted price; the original price shows struck through.
               </p>
             )}
           </div>

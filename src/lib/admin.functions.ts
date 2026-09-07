@@ -489,6 +489,12 @@ const clinicSchema = z.object({
   phone: z.string().trim().max(40),
   services: z.array(z.string().trim().min(2).max(120)).max(20),
 });
+const homeImagesSchema = z.object({
+  hero: z.string().trim().max(500),
+  shopCard: z.string().trim().max(500),
+  clinicCard: z.string().trim().max(500),
+  storeInterior: z.string().trim().max(500),
+});
 
 export const adminGetSettings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -497,13 +503,14 @@ export const adminGetSettings = createServerFn({ method: "GET" })
     const { data } = await context.supabase
       .from("site_settings")
       .select("key, value")
-      .in("key", ["contact", "shop", "clinic"]);
+      .in("key", ["contact", "shop", "clinic", "home_images"]);
     const map = new Map(
       (data ?? []).map((r) => [r.key, r.value as Record<string, unknown>]),
     );
     const contact = (map.get("contact") ?? {}) as Record<string, unknown>;
     const shop = (map.get("shop") ?? {}) as Record<string, unknown>;
     const clinic = (map.get("clinic") ?? {}) as Record<string, unknown>;
+    const homeImages = (map.get("home_images") ?? {}) as Record<string, unknown>;
     return {
       contact: {
         phone: (contact.phone as string) ?? "",
@@ -524,6 +531,12 @@ export const adminGetSettings = createServerFn({ method: "GET" })
         phone: (clinic.phone as string) ?? "",
         services: (clinic.services as string[]) ?? [],
       },
+      homeImages: {
+        hero: (homeImages.hero as string) ?? "",
+        shopCard: (homeImages.shopCard as string) ?? "",
+        clinicCard: (homeImages.clinicCard as string) ?? "",
+        storeInterior: (homeImages.storeInterior as string) ?? "",
+      },
     };
   });
 
@@ -535,6 +548,7 @@ export const adminUpdateSettings = createServerFn({ method: "POST" })
         z.object({ key: z.literal("contact"), value: contactSchema }),
         z.object({ key: z.literal("shop"), value: shopSchema }),
         z.object({ key: z.literal("clinic"), value: clinicSchema }),
+        z.object({ key: z.literal("home_images"), value: homeImagesSchema }),
       ])
       .parse(input),
   )

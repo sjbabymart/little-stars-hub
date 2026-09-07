@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Save } from "lucide-react";
+import { ImagePlus, Save, X } from "lucide-react";
 import { adminGetSettings, adminUpdateSettings } from "@/lib/admin.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,11 +42,61 @@ const emptyContact: ContactForm = { phone: "", whatsapp: "", email: "", address:
 const emptyShop: ShopForm = { announcement: "", freeDeliveryThreshold: "5000", currency: "KSh" };
 const emptyClinic: ClinicForm = { name: "", tagline: "", hours: "", phone: "", services: "" };
 
+type HomeImagesForm = {
+  hero: string;
+  shopCard: string;
+  clinicCard: string;
+  storeInterior: string;
+};
+
+const emptyHomeImages: HomeImagesForm = { hero: "", shopCard: "", clinicCard: "", storeInterior: "" };
+
+const HOME_IMAGE_SLOTS: { key: keyof HomeImagesForm; label: string; hint: string }[] = [
+  { key: "hero", label: "Hero image", hint: "Main banner photo on the right of the hero section." },
+  { key: "shopCard", label: "Shop card image", hint: "The Baby Mart card in the two-worlds section." },
+  { key: "clinicCard", label: "Clinic card image", hint: "Njau Children's Clinic card in the two-worlds section." },
+  { key: "storeInterior", label: "Red carpet image", hint: "Photo in the Red Carpet teaser section." },
+];
+
+function SiteImagePreview({ src, label }: { src: string; label: string }) {
+  const [url, setUrl] = useState<string | null>(() =>
+    src.startsWith("/") || src.startsWith("http") ? src : null,
+  );
+
+  useEffect(() => {
+    if (!src || src.startsWith("/") || src.startsWith("http")) {
+      setUrl(null);
+      return;
+    }
+    let cancelled = false;
+    supabase.storage
+      .from("site-images")
+      .createSignedUrl(src, 3600)
+      .then(({ data }) => {
+        if (!cancelled && data?.signedUrl) setUrl(data.signedUrl);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [src]);
+
+  if (!url) {
+    return (
+      <div className="flex h-32 w-full items-center justify-center rounded-xl bg-muted text-xs text-muted-foreground">
+        {label} — using default image
+      </div>
+    );
+  }
+  return <img src={url} alt={label} className="h-32 w-full rounded-xl object-cover" />;
+}
+
 export function AdminSettings() {
   const qc = useQueryClient();
   const [contact, setContact] = useState<ContactForm>(emptyContact);
   const [shop, setShop] = useState<ShopForm>(emptyShop);
   const [clinic, setClinic] = useState<ClinicForm>(emptyClinic);
+  const [homeImages, setHomeImages] = useState<HomeImagesForm>(emptyHomeImages);
+  const [uploadingKey, setUploadingKey] = useState<keyof HomeImagesForm | null>(null);
 
   const settings = useQuery({
     queryKey: ["admin", "settings"],
@@ -68,6 +119,7 @@ export function AdminSettings() {
       phone: d.clinic.phone,
       services: (d.clinic.services ?? []).join("\n"),
     });
+    setHomeImages({ ...(d.homeImages ?? emptyHomeImages) });
   }, [settings.data]);
 
   const invalidate = () => {
@@ -138,6 +190,44 @@ export function AdminSettings() {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const saveHomeImages = useMutation({
+    mutationFn: () =>
+      adminUpdateSettings({
+        data: { key: "home_images", value: { ...homeImages } },
+      }),
+    onSuccess: () => {
+      toast.success("Home page images saved");
+      invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  async function handleHomeImageUpload(key: keyof HomeImagesForm, files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+    const accepted = ["image/png", "image/jpeg", "image/webp"];
+    if (!accepted.includes(file.type)) {
+      toast.error("Only PNG, JPEG and WebP images are allowed");
+      return;
+    }
+    setUploadingKey(key);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+      const path = `home/${key}-${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from("site-images").upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+      });
+      if (error) throw error;
+      setHomeImages({ ...homeImages, [key]: path });
+      toast.success("Image uploaded — remember to save");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploadingKey(null);
+    }
+  }
 
   if (settings.isLoading) {
     return <p className="text-sm text-muted-foreground">Loading settings…</p>;
@@ -332,6 +422,67 @@ export function AdminSettings() {
                 </Button>
               </div>
             </form>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Home page images</CardTitle>
+            <CardDescription>
+              Change the photos shown on the home page. Uploads must be PNG, JPEG or WebP.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {HOME_IMAGE_SLOTS.map((slot) => (
+                <div key={slot.key} className="rounded-xl border p-4">
+                  <Label className="font-medium">{slot.label}</Label>
+                  <p className="text-xs text-muted-foreground">{slot.hint}</p>
+                  <div className="mt-3">
+                    <SiteImagePreview src={homeImages[slot.key]} label={slot.label} />
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-1.5 text-sm transition hover:bg-secondary">
+                      <ImagePlus className="size-4" />
+                      {uploadingKey === slot.key ? "Uploading…" : "Upload image"}
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        className="hidden"
+                        disabled={uploadingKey !== null}
+                        onChange={(e) => {
+                          const input = e.currentTarget;
+                          void handleHomeImageUpload(slot.key, input.files).finally(() => {
+                            input.value = "";
+                          });
+                        }}
+                      />
+                    </label>
+                    {homeImages[slot.key] && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setHomeImages({ ...homeImages, [slot.key]: "" })
+                        }
+                        className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm text-destructive transition hover:bg-destructive/10"
+                      >
+                        <X className="size-4" /> Reset to default
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4">
+              <Button
+                type="button"
+                onClick={() => saveHomeImages.mutate()}
+                disabled={saveHomeImages.isPending}
+              >
+                <Save className="mr-2 h-4 w-4" />
+                {saveHomeImages.isPending ? "Saving…" : "Save home page images"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

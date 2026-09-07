@@ -59,10 +59,18 @@ export type ClinicSettings = {
   services: string[];
 };
 
+export type HomeImages = {
+  hero: string;
+  shopCard: string;
+  clinicCard: string;
+  storeInterior: string;
+};
+
 export type SiteContent = {
   contact: ContactSettings;
   shop: ShopSettings;
   clinic: ClinicSettings;
+  homeImages: HomeImages;
 };
 
 export type OrderItemDto = {

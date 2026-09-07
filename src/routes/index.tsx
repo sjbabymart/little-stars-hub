@@ -50,6 +50,12 @@ function Index() {
   const wa = site?.contact.whatsapp ?? "254711706413";
   const waLink = `https://wa.me/${wa}?text=${encodeURIComponent("Hello S & J Baby Mart, I'd like to make an enquiry.")}`;
 
+  const homeImages = site?.homeImages;
+  const hero = homeImages?.hero || heroImg;
+  const shopCardImage = homeImages?.shopCard || shopCard;
+  const clinicCardImage = homeImages?.clinicCard || clinicCard;
+  const storeInteriorImage = homeImages?.storeInterior || storeInterior;
+
   const featured = (catalog?.products ?? []).filter((p) => p.featured).slice(0, 4);
   const products = (featured.length ? featured : (catalog?.products ?? [])).slice(0, 4);
   const categories = (catalog?.categories ?? []).slice(0, 5);
@@ -102,7 +108,7 @@ function Index() {
           </div>
           <div className="relative">
             <img
-              src={heroImg}
+              src={hero}
               alt="Baby clothing and essentials at S & J Baby Mart in Nairobi"
               className="w-full rounded-[2rem] object-cover shadow-lift"
             />
@@ -146,7 +152,7 @@ function Index() {
         <div className="grid gap-6 lg:grid-cols-2">
           <article className="group relative overflow-hidden rounded-[2rem] shadow-soft">
             <img
-              src={shopCard}
+              src={shopCardImage}
               alt="Baby clothing rack at S & J Baby Mart"
               className="h-80 w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
@@ -168,7 +174,7 @@ function Index() {
 
           <article className="group relative overflow-hidden rounded-[2rem] shadow-soft">
             <img
-              src={clinicCard}
+              src={clinicCardImage}
               alt="Njau Children's Clinic consultation room"
               className="h-80 w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
@@ -235,7 +241,7 @@ function Index() {
       <section className="bg-secondary">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 lg:grid-cols-2">
           <img
-            src={storeInterior}
+            src={storeInteriorImage}
             alt="Children's fashion display in store"
             className="rounded-[2rem] object-cover shadow-soft"
           />

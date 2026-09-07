@@ -6,6 +6,7 @@ import type {
   ClinicSettings,
   ContactSettings,
   DeliveryZone,
+  HomeImages,
   Product,
   RedCarpetImageDto,
   ShopSettings,
@@ -32,22 +33,36 @@ const DEFAULT_CLINIC: ClinicSettings = {
   services: [],
 };
 
+const DEFAULT_HOME_IMAGES: HomeImages = {
+  hero: "",
+  shopCard: "",
+  clinicCard: "",
+  storeInterior: "",
+};
+
 export const getSiteContent = createServerFn({ method: "GET" }).handler(
   async (): Promise<SiteContent> => {
     const supabase = createPublicClient();
     const { data } = await supabase
       .from("site_settings")
       .select("key, value")
-      .in("key", ["contact", "shop", "clinic"]);
+      .in("key", ["contact", "shop", "clinic", "home_images"]);
     const map = new Map((data ?? []).map((r) => [r.key, r.value as Record<string, unknown>]));
     const merge = <T>(defaults: T, key: string): T => ({
       ...defaults,
       ...((map.get(key) ?? {}) as Partial<T>),
     });
+    const homeImages = merge(DEFAULT_HOME_IMAGES, "home_images");
+    const [hero, shopCard, clinicCard, storeInterior] = await signImagePaths(
+      supabase,
+      "site-images",
+      [homeImages.hero, homeImages.shopCard, homeImages.clinicCard, homeImages.storeInterior],
+    );
     return {
       contact: merge(DEFAULT_CONTACT, "contact"),
       shop: merge(DEFAULT_SHOP, "shop"),
       clinic: merge(DEFAULT_CLINIC, "clinic"),
+      homeImages: { hero, shopCard, clinicCard, storeInterior },
     };
   },
 );

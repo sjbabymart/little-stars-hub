@@ -13,6 +13,26 @@ import {
 import clinicInterior from "@/assets/clinic-interior.jpg";
 import { AppointmentRequestForm } from "@/components/site/AppointmentRequestForm";
 import { siteContentQuery } from "@/lib/queries";
+import { abs, OG_IMAGE, SITE_URL } from "@/lib/seo";
+
+const clinicMedicalLd = {
+  "@context": "https://schema.org",
+  "@type": "MedicalClinic",
+  name: "Njau Children's Clinic",
+  url: `${SITE_URL}/clinic`,
+  image: OG_IMAGE,
+  telephone: "+254711706413",
+  email: "info@sjbaby.co.ke",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Nairobi",
+    addressRegion: "Nairobi County",
+    addressCountry: "KE",
+  },
+  medicalSpecialty: "Pediatric",
+  openingHours: "Mo-Fr 08:00-17:00",
+  isAcceptingNewPatients: true,
+};
 
 const FALLBACK_SERVICES = [
   {
@@ -53,9 +73,16 @@ export const Route = createFileRoute("/clinic")({
           "Gentle paediatric care for children in Nairobi — consultations, immunisation, growth and development checks.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/clinic" },
+      { property: "og:url", content: abs("/clinic") },
+      { property: "og:image", content: OG_IMAGE },
+      { name: "twitter:title", content: "Njau Children's Clinic | Paediatric Care in Nairobi" },
+      {
+        name: "twitter:description",
+        content: "Paediatric consultations, immunisation and growth checks in Nairobi — book an appointment.",
+      },
+      { "script:ld+json": clinicMedicalLd },
     ],
-    links: [{ rel: "canonical", href: "/clinic" }],
+    links: [{ rel: "canonical", href: abs("/clinic") }],
   }),
   component: ClinicPage,
 });

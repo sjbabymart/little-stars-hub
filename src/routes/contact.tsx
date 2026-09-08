@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Clock, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 import { siteContentQuery } from "@/lib/queries";
 import { sendContactMessage } from "@/lib/contact.functions";
+import { abs, OG_IMAGE } from "@/lib/seo";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -21,9 +22,18 @@ export const Route = createFileRoute("/contact")({
         content: "Reach us in Nairobi by phone, WhatsApp or email — we're happy to help.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/contact" },
+      { property: "og:url", content: abs("/contact") },
+      { property: "og:image", content: OG_IMAGE },
+      {
+        name: "twitter:title",
+        content: "Contact S & J Baby Mart & Njau Children's Clinic",
+      },
+      {
+        name: "twitter:description",
+        content: "Reach us in Nairobi by phone, WhatsApp or email — we're happy to help.",
+      },
     ],
-    links: [{ rel: "canonical", href: "/contact" }],
+    links: [{ rel: "canonical", href: abs("/contact") }],
   }),
   component: ContactPage,
 });

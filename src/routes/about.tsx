@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Clock, Compass, Heart, Mail, MapPin, Phone, Sparkles, Target } from "lucide-react";
 import storeInterior from "@/assets/store-interior.jpg";
 import { siteContentQuery } from "@/lib/queries";
+import { abs, OG_IMAGE } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -20,9 +21,19 @@ export const Route = createFileRoute("/about")({
           "A family-run baby and children's store alongside a gentle paediatric clinic — read our story, mission and visiting hours.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/about" },
+      { property: "og:url", content: abs("/about") },
+      { property: "og:image", content: OG_IMAGE },
+      {
+        name: "twitter:title",
+        content: "About S & J Baby Mart & Njau Children's Clinic",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "A family-run baby and children's store alongside a gentle paediatric clinic in Nairobi.",
+      },
     ],
-    links: [{ rel: "canonical", href: "/about" }],
+    links: [{ rel: "canonical", href: abs("/about") }],
   }),
   component: AboutPage,
 });

@@ -19,23 +19,72 @@ import clinicCard from "@/assets/card-clinic.jpg";
 import storeInterior from "@/assets/store-interior.jpg";
 import { ProductCard } from "@/components/site/ProductCard";
 import { catalogQuery, siteContentQuery } from "@/lib/queries";
+import { abs, OG_IMAGE, SITE_NAME, SITE_URL } from "@/lib/seo";
+
+const homeOrganizationLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SITE_NAME,
+  alternateName: "Njau Children's Clinic",
+  url: SITE_URL,
+  logo: OG_IMAGE,
+  image: OG_IMAGE,
+  telephone: "+254711706413",
+  email: "info@sjbaby.co.ke",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Nairobi",
+    addressRegion: "Nairobi County",
+    addressCountry: "KE",
+  },
+  areaServed: "Nairobi",
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+254711706413",
+    contactType: "customer service",
+    availableLanguage: ["en", "sw"],
+  },
+};
+
+const homeWebSiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_NAME,
+  alternateName: "Njau Children's Clinic",
+  url: SITE_URL,
+  inLanguage: "en",
+};
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "S & J Baby Mart | Baby Clothing & Njau Children's Clinic, Nairobi" },
+      { title: `${SITE_NAME} — Baby & Kids' Clothing, Nairobi | Njau Children's Clinic` },
       {
         name: "description",
         content:
-          "Baby clothing, essentials and fashion in Nairobi, plus gentle paediatric care at Njau Children's Clinic. Call +254711706413.",
+          "Shop quality baby & kids' clothing, essentials and fashion in Nairobi at S & J Baby Mart — plus gentle paediatric care at Njau Children's Clinic. Call +254711706413.",
       },
-      { property: "og:title", content: "S & J Baby Mart | Baby Clothing & Njau Children's Clinic" },
+      {
+        property: "og:title",
+        content: `${SITE_NAME} — Baby & Kids' Clothing, Nairobi | Paediatric Clinic`,
+      },
       {
         property: "og:description",
         content:
-          "Shop quality baby clothing and essentials in Nairobi, and book paediatric appointments at Njau Children's Clinic.",
+          "Shop baby & kids' clothing and essentials in Nairobi and book gentle paediatric appointments at Njau Children's Clinic.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: abs("/") },
+      { property: "og:image", content: OG_IMAGE },
+      { name: "twitter:title", content: `${SITE_NAME} — Baby & Kids' Clothing in Nairobi` },
+      {
+        name: "twitter:description",
+        content: "Baby clothing store & paediatric clinic in Nairobi, Kenya. Shop online or call +254711706413.",
+      },
+      { "script:ld+json": homeOrganizationLd },
+      { "script:ld+json": homeWebSiteLd },
     ],
+    links: [{ rel: "canonical", href: abs("/") }],
   }),
   component: Index,
 });

@@ -5,6 +5,7 @@ import { Search, ShoppingBag, Truck } from "lucide-react";
 import { ProductCard } from "@/components/site/ProductCard";
 import { catalogQuery, deliveryZonesQuery, siteContentQuery } from "@/lib/queries";
 import { formatKes } from "@/lib/format";
+import { abs, OG_IMAGE } from "@/lib/seo";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -22,9 +23,19 @@ export const Route = createFileRoute("/shop")({
           "Baby clothing, essentials, footwear and accessories in Nairobi — order online with delivery or store pickup.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/shop" },
+      { property: "og:url", content: abs("/shop") },
+      { property: "og:image", content: OG_IMAGE },
+      {
+        name: "twitter:title",
+        content: "Shop Baby Clothing & Essentials | S & J Baby Mart Nairobi",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Baby clothing, essentials, footwear and accessories in Nairobi — order online with delivery or store pickup.",
+      },
     ],
-    links: [{ rel: "canonical", href: "/shop" }],
+    links: [{ rel: "canonical", href: abs("/shop") }],
   }),
   component: ShopPage,
 });

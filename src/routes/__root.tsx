@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SITE_NAME, OG_IMAGE } from "../lib/seo";
 import { CartProvider } from "../lib/cart";
 import { SiteHeader } from "../components/site/SiteHeader";
 import { SiteFooter } from "../components/site/SiteFooter";
@@ -101,18 +102,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "S & J Baby Mart | Baby Clothing & Njau Children's Clinic" },
+      {
+        title: `${SITE_NAME} — Baby & Kids' Clothing, Nairobi & Paediatric Clinic`,
+      },
       {
         name: "description",
         content:
-          "Baby clothing, essentials and fashion in Nairobi, plus gentle paediatric care at Njau Children's Clinic.",
+          "Shop quality baby & kids' clothing, essentials and fashion in Nairobi at S & J Baby Mart — plus gentle paediatric care at Njau Children's Clinic.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: SITE_NAME },
+      { property: "og:locale", content: "en_KE" },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:alt", content: "S & J Baby Mart — baby clothing store in Nairobi" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
